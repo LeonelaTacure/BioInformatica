@@ -1,3 +1,47 @@
 
+#Scrip Paternidad : Leonela Tacure
 
+#LINK DONDE SE ENCUENTRAN LOS ARCHIVOS DNA
+#https://drive.google.com/drive/folders/14ZCKH6o58o5WxsLbG32Uq-zMa4lTfQD4?usp=sharing
+
+#Biblioteca de microsatélites
+microsatelites={1:'CGG', 2:"AGT", 3:"TTG"}
+
+#Datos del Hijo
+Nombre_child = input('Ingrese nombres del niño :').upper()
+print('Ingresamos la secuencia genética de %s :\n'%Nombre_child)
+files.upload()
+Nombre_child = open ('DNA_child.txt','r')
+Nombre_child = Nombre_child.read().upper()
+print(Nombre_child, '\n\n')
+#Se tiene una biblioteca vacía para agregar la longitud de cada microsatélite
+microsat_child={} 
+
+
+#Datos Padre_1
+Nombre_P1 = input("Ingrese el nombre del primer probable progenitor 1 :").upper()
+print('Ingresamos la secuencia genética de %s :\n'%Nombre_P1)
+files.upload()
+ADN_PADRE1 = open ('DNA_P1.txt','r')
+ADN_PADRE1 = ADN_PADRE1.read().upper()
+print(ADN_PADRE1, '\n\n')
+microsat_P1={}
+
+#Datos Padre_2
+Nombre_P2 = input("Ingrese el nombre del primer probable progenitor 2 :").upper()
+print('Ingresamos la secuencia genética de %s :\n'%Nombre_P2)
+files.upload()
+ADN_PADRE2 = open ('DNA_P1.txt','r')
+ADN_PADRE2 = ADN_PADRE2.read().upper()
+print(ADN_PADRE2, '\n\n')
+microsat_P2={}
+
+#Datos Padre_3
+Nombre_P3 = input("Ingrese el nombre del primer probable progenitor 3 :").upper()
+print('Ingresamos la secuencia genética de %s :\n'%Nombre_P1)
+files.upload()
+ADN_PADRE3 = open ('DNA_P1.txt','r')
+ADN_PADRE3 = ADN_PADRE3.read().upper()
+print(ADN_PADRE3, '\n\n')
+microsat_P3={}
 
