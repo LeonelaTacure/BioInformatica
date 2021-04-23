@@ -1,47 +1,111 @@
 
 #Scrip Paternidad : Leonela Tacure
 
-#LINK DONDE SE ENCUENTRAN LOS ARCHIVOS DNA
-#https://drive.google.com/drive/folders/14ZCKH6o58o5WxsLbG32Uq-zMa4lTfQD4?usp=sharing
+#Importación de paquete para usar diferente colores como formato en la terminal
+from termcolor import colored
+import urllib.request as p
 
-#Biblioteca de microsatélites
-microsatelites={1:'CGG', 2:"AGT", 3:"TTG"}
+#Diccionario de microsatélites. Esta estrategia permite un almacenamiento ordenado de las secuencias de interés que facilita el análisis
+dic_micro_sat={1:'CGG', 2:"AGT", 3:"TTG"}
 
-#Datos del Hijo
-Nombre_child = input('Ingrese nombres del niño :').upper()
-print('Ingresamos la secuencia genética de %s :\n'%Nombre_child)
-files.upload()
-Nombre_child = open ('DNA_child.txt','r')
-Nombre_child = Nombre_child.read().upper()
-print(Nombre_child, '\n\n')
-#Se tiene una biblioteca vacía para agregar la longitud de cada microsatélite
-microsat_child={} 
+#Función que brinda la longitud de nucleótidos que tienen los microsatélites presentes en la secuencia
+def len_micro_sat(name,adn,string,dic):
+  x = adn.count(string)
+  z = len(string)
+  y = x*z
+  #X cuenta las veces que el microsatélite se repite en la secuencia, pero Y es la longitud total de letras.
+  if y>0 :
+    print("\n",name,"presenta el microsatélite",string,"con longitud de nucleótidos:",y)
+    dic[string]=y
+    #con el último paso agregamos al diccionario el microsatélite con su respectiva frecuencia. 
+  else:
+    print("\n",name,"no presenta el microsatélite",string)
+    dic[string]=y
 
+#Función para actualizar los diccionarios que contiene la frecuencia de cada microsatélite en la secuencia de ADN de estudio
+def microsat(name,adn,dic_micro_sat,dic1):
+  v1=dic_micro_sat.values()
+  list_micro_sat=list(v1)
+  num_m=len(list_micro_sat)
+  i=0
+  while i < num_m:
+    x = list_micro_sat[i]
+    len_micro_sat(name,adn,x,dic1)
+    i=i+1
+    #Se va a aplica la unción Len_microsat para cada elemento de la lista de microsatélites
 
-#Datos Padre_1
-Nombre_P1 = input("Ingrese el nombre del primer probable progenitor 1 :").upper()
-print('Ingresamos la secuencia genética de %s :\n'%Nombre_P1)
-files.upload()
-ADN_PADRE1 = open ('DNA_P1.txt','r')
-ADN_PADRE1 = ADN_PADRE1.read().upper()
-print(ADN_PADRE1, '\n\n')
-microsat_P1={}
+#Por herencia genética, un hijo(a) hereda al menos uno de los tres microsatélites y ambos deben tener la misma concentración de nucleótidos.
+#Si no coincide la presencia y la longitud de algun microsatélite al comparar las secuencias de ADN, no existe un vínculo de paternidad.
+#En la siguiente función se plasma la lógica para la evaluación de las secuencias.
 
-#Datos Padre_2
-Nombre_P2 = input("Ingrese el nombre del primer probable progenitor 2 :").upper()
-print('Ingresamos la secuencia genética de %s :\n'%Nombre_P2)
-files.upload()
-ADN_PADRE2 = open ('DNA_P1.txt','r')
-ADN_PADRE2 = ADN_PADRE2.read().upper()
-print(ADN_PADRE2, '\n\n')
-microsat_P2={}
+#Función para comparar la presencia y la longitud de los microsatélites de dos sujetos
+#En este reto el hijo(a) es el SUJETO 1 y el probable padre es el SUJETO 2
+def compare_micro_sat(N1,D1,N2,D2): #N1 = Nombre de sujeto 1; D1 = Diccionario de microsatélites y sus longitudes del sujeto 1, idem para sujeto 2.
+  shared_items = {key: D1[key] for key in D1 if key in D2 and D1[key] == D2[key]}#Crea un diccionario items compartidos entre los otros dos diccionarios D1 Y D2
+  same_num_microsat=len(shared_items)
+  if same_num_microsat == 3:
+    print("\nHAY UNA MUY ALTA PROBABILIDAD de que %s"%N2,"sea el progenitor de %s"%N1,", comparten los 03 marcadores con la misma longitud de nucleótidos.")
+  elif same_num_microsat == 2:
+    print("\nHAY ALTA PROBABILIDAD de que %s"%N2,"sea el progenitor de %s"%N1,", comparten 02 marcadores con la misma longitud de nucleótidos.")
+  elif same_num_microsat == 1:
+    print("\nES PROBABLE que %s"%N2,"sea el progenitor de %s"%N1,", comparten 01 marcador con la misma longitud de nucleótidos.")
+  elif same_num_microsat == 0:
+    print("\n%s"%N2,"no es el progenitor de %s"%N1,", no comparten marcadores con igual longitud de nucleótidos.")
+  else:
+    print("\nHA OCURRIDO UN ERROR, POR FAVOR REVISAR LOS DATOS INGRESADOS")#NO ES POSIBLE QUE SE GENEREN NÚMEROS NEGATIVOS O MAYORES A 3, YA QUE EL SCRIPT SÓLO EVALÚA 3 MICROSATÉLITES
 
-#Datos Padre_3
-Nombre_P3 = input("Ingrese el nombre del primer probable progenitor 3 :").upper()
-print('Ingresamos la secuencia genética de %s :\n'%Nombre_P1)
-files.upload()
-ADN_PADRE3 = open ('DNA_P1.txt','r')
-ADN_PADRE3 = ADN_PADRE3.read().upper()
-print(ADN_PADRE3, '\n\n')
-microsat_P3={}
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+print(colored('BIENVENIDO AL ALGORITMO DE PRUEBA DE PARTENIDAD v2.0', attrs=['bold']))
+
+#Ingreso de datos del niño(a) y la secuencia de ADN desde un repositorio en Github
+#Se carga la secuencia de ADN que se encuentra en un archivo TXT
+name_child = input(' \nIntroduzca el nombre del hijo(a):\n').upper() #Se estandariza a mayúsculas las cadenas de caracteres
+print('\nIngresamos la secuencia genética de %s:\n'%name_child) 
+adn_child  = p.urlopen("https://raw.githubusercontent.com/LeonelaTacure/BioInformatica/main/DNA_baby.txt")
+#adn_child = p.urlopen("https://raw.githubusercontent.com/LeonelaTacure/BioInformatica/main/DNA_child.txt") #Otro ejemplo para pruebas
+adn_child = adn_child.read().upper()
+adn_child = str(adn_child)
+print(adn_child)
+micro_sat_child={} #Se tiene un diccionario vacío para agregar la longitud de cada microsatélite
+
+#Datos de los posibles padres y las secuencias de ADN desde un repositorio en Github
+#Se carga la secuencia de ADN que se encuentra en un archivo TXT
+name_p1 = input("\nIngrese el nombre del primer probable progenitor:\n").upper()
+print("\nIngresamos la secuencia genética de %s:\n"%name_p1)
+adn_p1 = p.urlopen("https://raw.githubusercontent.com/LeonelaTacure/BioInformatica/main/DNA_Padre1.txt")
+#adn_p1 = p.urlopen("https://raw.githubusercontent.com/LeonelaTacure/BioInformatica/main/DNA_P1.txt") #Otro ejemplo para pruebas
+adn_p1 = adn_p1.read().upper()
+adn_p1 = str(adn_p1)
+print(adn_p1)
+micro_sat_p1={}
+
+name_p2 = input("\nIngrese el nombre del segundo probable progenitor:\n").upper()
+print("\nIngresamos la secuencia genética de %s:\n"%name_p2)
+adn_p2 = p.urlopen("https://raw.githubusercontent.com/LeonelaTacure/BioInformatica/main/DNA_Padre2.txt")
+#adn_p2 = p.urlopen("https://raw.githubusercontent.com/LeonelaTacure/BioInformatica/main/DNA_P2.txt") #Otro ejemplo para pruebas
+adn_p2 = adn_p2.read().upper()
+adn_p2 = str(adn_p2)
+print(adn_p2)
+micro_sat_p2={}
+
+name_p3 = input("\nIngrese el nombre del tercer probable progenitor:\n").upper()
+print("\nIngresamos la secuencia genética de %s:\n"%name_p3)
+adn_p3 = p.urlopen("https://raw.githubusercontent.com/LeonelaTacure/BioInformatica/main/DNA_Padre3.txt")
+#adn_p3 = p.urlopen("https://raw.githubusercontent.com/LeonelaTacure/BioInformatica/main/DNA_P3.txt") #Otro ejemplo para pruebas
+adn_p3 = adn_p3.read().upper()
+adn_p3 = str(adn_p3)
+print(adn_p3)
+micro_sat_p3={}
+
+#Se procede a determinar la presencia y la longitud de cada microsatélite en cada secuencia de cada sujeto 
+microsat(name_child,adn_child,dic_micro_sat,micro_sat_child)
+microsat(name_p1,adn_p1,dic_micro_sat,micro_sat_p1)
+microsat(name_p2,adn_p2,dic_micro_sat,micro_sat_p2)
+microsat(name_p3,adn_p3,dic_micro_sat,micro_sat_p3)
+
+#Se compara la presencia y longitud de los microsatélites entre el hijo(a) y cada problable progenitor
+#La función brinda la probabilidad de paternidad que tienen los candidatos
+compare_micro_sat(name_child,micro_sat_child,name_p1,micro_sat_p1)
+compare_micro_sat(name_child,micro_sat_child,name_p2,micro_sat_p2)
+compare_micro_sat(name_child,micro_sat_child,name_p3,micro_sat_p3)
